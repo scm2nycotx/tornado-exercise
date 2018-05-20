@@ -21,13 +21,35 @@ class MainHandler(TemplateHandler):
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
     name = self.get_query_argument("name", "Nobody")
-    self.render_template("hello.html", {'name': 'World'})
+    amount = self.get_query_argument("amount", "0")
+    amount = float(amount)
+    amount = amount * 1.15
+    context = {
+      "name" : name,
+      "users" : ["Sam", "mittens", "Chih-Ming"],
+      "amount" : amount
+    }
+    self.render_template("hello.html", context)
+    
+
+class Page2Handler(TemplateHandler):
+  def get(self):
+    self.set_header(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, max-age=0')
+    self.render_template("page2.html", {})
     
 def make_app():
   return tornado.web.Application([
     (r"/", MainHandler),
+    (r"/page2", Page2Handler),
+    (
+      r"/static/(.*)", 
+      tornado.web.StaticFileHandler,
+      {'path': 'static'}
+    ),
   ], autoreload=True)
-
+  
 if __name__ == "__main__":
   tornado.log.enable_pretty_logging()
   app = make_app()
