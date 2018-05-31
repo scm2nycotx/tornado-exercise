@@ -2,8 +2,6 @@ import tornado.ioloop
 import tornado.web
 import tornado.log
 
-import os
-
 from jinja2 import \
   Environment, PackageLoader, select_autoescape
 
@@ -40,10 +38,24 @@ class Page2Handler(TemplateHandler):
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
     self.render_template("page2.html", {})
-    
+
+class FormHandler(TemplateHandler):
+  def get(self):
+    self.set_header(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, max-age=0')
+    self.render_template("form.html", {})
+  
+  def post(self):
+    self.set_header(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, max-age=0')
+    self.render_template("form.html", {})
+
 def make_app():
   return tornado.web.Application([
     (r"/", MainHandler),
+    (r"/form", FormHandler),
     (r"/page2", Page2Handler),
     (
       r"/static/(.*)", 
@@ -56,6 +68,5 @@ if __name__ == "__main__":
   tornado.log.enable_pretty_logging()
   
   app = make_app()
-  PORT = int(os.environ.get('PORT', '8080'))
-  app.listen(PORT)
+  app.listen(8000)
   tornado.ioloop.IOLoop.current().start()
