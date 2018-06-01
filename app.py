@@ -39,6 +39,13 @@ class Page2Handler(TemplateHandler):
       'no-store, no-cache, must-revalidate, max-age=0')
     self.render_template("page2.html", {})
 
+class Form1Handler(TemplateHandler):
+  def get(self):
+    self.set_header(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, max-age=0')
+    self.render_template("form1.html", {})
+
 class FormHandler(TemplateHandler):
   def get(self):
     self.set_header(
@@ -55,6 +62,7 @@ class FormHandler(TemplateHandler):
 def make_app():
   return tornado.web.Application([
     (r"/", MainHandler),
+    (r"/form1", Form1Handler),
     (r"/form", FormHandler),
     (r"/page2", Page2Handler),
     (
