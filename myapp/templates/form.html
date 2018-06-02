@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Form Test</h2>
+{% if error %}
+<h3>{{ error }}</h3>
+{% endif %}
 <form action="/form" method="POST">
   <label for="">First Name</label>
   <input type="text" name="first_name">
   <br><br>
   <label for="">E-Mail</label>
-  <input type="email" name="email" required>
+  <input type="email" name="email">
   <br><br>
   <select name="option">
     <option value="opt1">Option 1</option>

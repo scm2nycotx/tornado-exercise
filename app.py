@@ -32,12 +32,13 @@ class MainHandler(TemplateHandler):
     self.render_template("hello.html", context)
     
 
-class Page2Handler(TemplateHandler):
-  def get(self):
+class PageHandler(TemplateHandler):
+  def get(self, page):
+    page = page + ".html"
     self.set_header(
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
-    self.render_template("page2.html", {})
+    self.render_template(page, {})
 
 class Form1Handler(TemplateHandler):
   def get(self):
@@ -45,26 +46,39 @@ class Form1Handler(TemplateHandler):
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
     self.render_template("form1.html", {})
-
+    
 class FormHandler(TemplateHandler):
   def get(self):
+    search = self.get_query_argument('query', None)
+    print(search)
+    # do a look up in my database
     self.set_header(
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
     self.render_template("form.html", {})
   
   def post(self):
+    email = self.get_body_argument('email', None)
+    error = ""
+    if email :
+      print("EMAIL:", email)
+      self.redirect("/form-success")
+    
+    else:
+      error = "GIVE ME YOUR EMAIL!"
+    
     self.set_header(
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
-    self.render_template("form.html", {})
+    self.render_template("form.html", {"error": error})
 
 def make_app():
   return tornado.web.Application([
     (r"/", MainHandler),
     (r"/form1", Form1Handler),
     (r"/form", FormHandler),
-    (r"/page2", Page2Handler),
+    (r"/(page2)", PageHandler),
+    (r"/(form-success)", PageHandler),
     (
       r"/static/(.*)", 
       tornado.web.StaticFileHandler,
