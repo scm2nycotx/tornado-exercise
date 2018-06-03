@@ -49,7 +49,23 @@ class PageHandler(TemplateHandler):
       'Cache-Control',
       'no-store, no-cache, must-revalidate, max-age=0')
     self.render_template(page, {})
-
+    
+def send_email (email, comments):
+  response = client.send_email(
+    Destination={
+      'ToAddresses': ['scm2nycotx@gmail.com'],
+    },
+    Message={
+      'Body': {
+        'Text': {
+          'Charset': 'UTF-8',
+          'Data': '{} wants to talk to you\n\n{}'.format(email, comments),
+        },
+      },
+      'Subject': {'Charset': 'UTF-8', 'Data': 'Test email'},
+    },
+    Source='scm2nycotx@gmail.com',
+  )
 class Form1Handler(TemplateHandler):
   def get(self):
     self.set_header(
@@ -73,21 +89,7 @@ class FormHandler(TemplateHandler):
     error = ""
     if email:
       print("EMAIL:", email)
-      response = client.send_email(
-        Destination={
-          'ToAddresses': ['scm2nycotx@gmail.com'],
-        },
-        Message={
-          'Body': {
-            'Text': {
-              'Charset': 'UTF-8',
-              'Data': '{} wants to talk to you\n\n{}'.format(email, comments),
-            },
-          },
-          'Subject': {'Charset': 'UTF-8', 'Data': 'Test email'},
-        },
-        Source='scm2nycotx@gmail.com',
-      )
+      send_email(email, comments)
       self.redirect("/form-success")
     
     else:
